@@ -7,7 +7,8 @@ fl = ${f}_${n}
 
 ${fl}.out : ${fl}.c
 	${CXX} -o $@ $< ${CXX_FLAGS}
-run:
+
+run: ${fl}.out
 	./${fl}.out
 
 clean:
