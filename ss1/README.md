@@ -54,11 +54,64 @@ lua_tostringが返す文字列はヌル終端されている。
 
 - void lua_settop(lua_State \*L, int index)
     - topの値のindexを特定の値に変更する。新しい値が古い値よりも大きければtopの値は破棄される
+    - もしそうでないならばtopにnilをpushする。得にlua_settop(L,0)はstackの中身を全て破棄する(空にする)
+
+負のインデックス-xは正のインデックス-x + 1に等しい。
+そのためlua_pop(L,n)は以下のようにマクロとして書ける。
+このマクロlua_pop(L,n)はtopからn個の要素をpopする
+
+```C
+#define lua_pop(L,n) lua_settop(L, -(n) -1)
+```
 
 - void lua_pushvalue(lua_State \*L, int index)
+   - indexの位置にある要素をコピーしてtopにプッシュ 
+
 - void lua_remove(lua_State \*L, int index)
+   - indexの位置にある要素を削除してシフトダウン
+
 - void lua_insert(lua_State \*L, int index)
+   - topにある要素をindexの場所に移動してシフトアップ
+
 - void lua_replace(lua_State \*L, int index)
+    - topの値をpopしてindexの位置に動かす 
 
 
+以下の操作はstackに影響を与えない
+
+```C
+lua_settop(L, -1);  /* set top to its current value */
+lua_insert(L, -1);  /* move top element to the top */
+```
+
+stackの状態を確かめるには以下のようなdump関数を作ると便利である。
+
+```C
+static void stack_dump(lua_State* L) {
+    int index = 0;
+    int top = lua_gettop(L);
+    for( index = 1; index <= top; ++index) {
+        int t = lua_type(L,index);
+        switch(t) {
+            case LUA_TSTRING: /* strings */
+                printf("`%s`", lua_tostring(L,index));
+                break;
+
+            case LUA_TBOOLEAN: /* booleans */
+                printf(lua_toboolean(L,index) ? "true" : "false");
+                break;
+
+            case LUA_TNUMBER: /* number */
+                printf("%g", lua_tonumber(L,index));
+                break;
+
+            default: /* other values */
+                printf("%s", lua_typename(L,t));
+                break;
+        }
+        printf(" ");
+    }
+    printf("\n");
+}
+```
 
