@@ -5,15 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
-
-void error (lua_State *L, const char *fmt, ...) {
-    va_list argp;
-    va_start(argp, fmt);
-    vfprintf(stderr, fmt , argp);
-    va_end(argp);
-    lua_close(L);
-    exit(EXIT_FAILURE);
-}
+#include "tool.h" /* for error, stack_dump */
 
 void load_config (char *filename, int *width, int *height) {
     lua_State *L = luaL_newstate();
