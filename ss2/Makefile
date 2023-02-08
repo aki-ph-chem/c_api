@@ -1,6 +1,7 @@
 CXX = gcc
-CXX_FLAGS =  -llua -ldl
-
+OPT = -g -O1 # debug
+MY_TOOL = -L ../tool -ltool  -I ../tool/include # my tool
+CXX_FLAGS =  -llua -ldl ${MY_TOOL} 
 f = lua
 n = 0
 fl = ${f}_${n}
