@@ -2,3 +2,8 @@
 
 LuaのC言語のapiについて公開されている[公式の教科書](https://www.lua.org/pil/contents.html)の[the C API](https://www.lua.org/pil/24.html)を元に勉強する
 
+- [Makefileの備忘録はここ](./make)
+
+
+## [ss1: 公式教科書のss24(An Overview of the C API)](./ss1)
+## [ss2: 公式教科書のss25(Extending your Application)](./ss2)
