@@ -149,4 +149,54 @@ clean:
 .PHONY: clean run
 
 ```
+### [level_5](./level_5)
 
+生成したオブジェクトファイルから一旦共有ライブラリを生成して、dynamicリンクで実行ファイルを生成する。
+
+```Makefile
+CC = gcc
+INCLUDE = ./include
+LIB_NAME = my_tool
+OBJ = greet.o add.o
+
+greet: main.o lib${LIB_NAME}.so
+	${CC} -o $@ $< -L ./ -l${LIB_NAME}
+
+main.o : main.c  ${INCLUDE}/*.h
+	${CC} -c -o $@ -I ${INCLUDE} $<
+
+lib${LIB_NAME}.so : ${OBJ} 
+	${CC} -shared -o $@  $^
+
+%.o: ./src/%.c ${INCLUDE}/%.h
+	${CC} -fpic -Wall -c $< 
+
+run: greet
+	./greet
+
+clean:
+	rm greet *.o *.a
+
+.PHONY: clean run
+
+```
+
+生成した実行ファイルを実行してみると実行できない。
+
+```bash
+$ ./greet
+  ./greet: error while loading shared libraries: libmy_tool.so: cannot open shared object file: No such file or directory
+```
+
+そこでlddコマンドで調べると
+
+```bash
+$ ldd greet
+	linux-vdso.so.1 (0x00007ffe25bcd000)
+	libmy_tool.so => not found
+	libc.so.6 => /usr/lib/libc.so.6 (0x00007f505eae5000)
+	/lib64/ld-linux-x86-64.so.2 => /usr/lib64/ld-linux-x86-64.so.2 (0x00007f505eceb000)
+```
+
+と共有ライブラリが見つからないと出るので環境変数 LD_LIBRARY_PATH をリンクしたい共有ライブラリのパスを設定する。
+この環境変数の設定ができていれば正常に動作するはず。
