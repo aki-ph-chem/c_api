@@ -1,5 +1,6 @@
-path = "./libc_lib.so"
-my_lib = package.loadlib(path,"luaopen_mylib")
---my_lib = package.loadlib(path,"lua_dir")
-print(my_lib)
-my_lib("./")
+my_lib = require("libmylib") 
+res = my_lib.dir("./") 
+
+for _,v in pairs(res) do
+    print(v)
+end

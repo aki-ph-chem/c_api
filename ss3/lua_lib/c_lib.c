@@ -41,7 +41,7 @@ static const struct luaL_Reg my_lib[] = {
 };
 
 /* entry point */
-int luaopen_mylib(lua_State* L) {
+int luaopen_libmylib(lua_State* L) {
     luaL_newlib(L, my_lib);
     return 1;
 }
