@@ -7,3 +7,4 @@ LuaのC言語のapiについて公開されている[公式の教科書](https:/
 
 ## [ss1: 公式教科書のss24(An Overview of the C API)](./ss1)
 ## [ss2: 公式教科書のss25(Extending your Application)](./ss2)
+## [ss3: 公式教科書のss26(Calling C from Lua)](./ss3)
