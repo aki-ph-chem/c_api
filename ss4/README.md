@@ -58,7 +58,7 @@ int l_map(lua_State *L) {
     int n = luaL_getn(L ,1); /* get size of table */ 
 
     for(int i = 1; i <= n; ++i) {
-        lua_pushvalue(L, 2); */ push f */
+        lua_pushvalue(L, 2); /* push f */
         lua_rawgeti(L , 1, i); /* push t[i] */
         lua_call(L, 1, 1); /* call f(t[i]) */
         lua_rawseti(L, 1, i); /* t[i] = result */
@@ -149,13 +149,28 @@ void luaL_addchar(luaL_Buffer *B, char c);
 ```C
 void luaL_pushresult(luaL_Buffer *B);
 ```
+
 `luaL_Buffer`を初期化する。一度初期化されると`lua_State`Lのコピーを保持する。
 
 ```C
 void luaL_buffinit(lua_State *L, luaL_Buffer *B);
 ```
+`luaL_addlstring`は指定したサイズの文字列をバッファに渡す。
+一方`luaL_addstring`はnull終端された文字列をバッファに渡す。
 
 ```C
 void luaL_addlstring(luaL_Buffer *B, const char *s, size_t l);
 void luaL_addstring(luaL_Buffer *B, const char *s);
 ```
+
+## Registry
+
+C側ではLuaのgenericな値を保持することができない。
+また、その変数を使うライブラリは複数のLua statesで共有することはできない。
+
+対応策としてLuaのグローバル変数を使う方法がある。
+しかし、Lua側から変数が改ざんされてCのデータの整合性を損なう可能性がある。
+
+この問題を回避するためにLuaはC側からのみ自由にアクセスが可能なregistryと呼ばれるテーブルを持っている。
+
+## Reference
