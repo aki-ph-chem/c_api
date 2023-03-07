@@ -189,3 +189,46 @@ void lua_pushlightuserdata(lua_State *L, void *p);
 もちろん普通の文字列をkeyにすることも可能である。(自由にアクセスできるライブラリ等では良い方法である)
 
 ## Reference
+
+レジストリのkeyとして数値を使ってはいけない。というのは数値のkeyはreference systemに保持されるからである。
+このシステムではkeyの名前の衝突を心配せずにレジストリを使うことができる。
+
+関数
+
+```C
+int luaL_ref(lua_State *L, int t);
+```
+
+をtを`LUA_REGISTRYINDEX`としてを呼び出すとstackの値がpopされてレジストリに渡されて、
+レジストリへの参照(レジストリのindex)を返り値として得ることができる。
+
+最後に関数
+
+```C
+void lua_unref(lua_State *L, int t, int ref);
+```
+
+をtを`LUA_REGISTRYINDEX`として呼び出すと参照が片付けられる。
+
+この関数を呼び出した後で、`lua_ref`を呼び出すと、新しい参照が生成される。
+
+`luaL_ref`はstackがnilな状態で呼び出すと`LUA_REFNIL`を返す。(Lua 5.4.4で実際に実行するとPANICした)
+
+`luaL_unref()`は
+
+```C
+luaL_unref(L,LUA_REGISTRYINDEX, LUA_REFNIL);
+```
+
+として呼び出すと何も影響を与えない。
+
+一方`lua_rawgeti()`は
+
+```C
+lua_rawgeti(L, LUA_REGISTRYINDEX, LUA_REFNIL);
+```
+
+はnilな値をstackにpushする。
+
+reference systemはまた`LUA_NOREF`を定義している。これは参照が有効でないことを示すのに有効である。
+`LUA_REFNIL`と同じく`LUA_NOREF`はnilを返し、他に影響を与えない。
